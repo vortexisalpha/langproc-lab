@@ -3,25 +3,47 @@ CPPFLAGS += -I include
 
 all : bin/print_canonical bin/eval_expr
 
+BISON = /usr/local/opt/bison/bin/bison
+FLEX = /usr/local/opt/flex/bin/flex
+
+HEADERS := include/ast.hpp \
+           include/ast/ast_expression.hpp \
+           include/ast/ast_primitives.hpp \
+           include/ast/ast_operators.hpp \
+           include/ast/ast_unary.hpp \
+           include/ast/ast_functions.hpp
+
 src/maths_parser.tab.cpp src/maths_parser.tab.hpp : src/maths_parser.y
-	bison -v -d src/maths_parser.y -o src/maths_parser.tab.cpp
+	$(BISON) -v -d src/maths_parser.y -o src/maths_parser.tab.cpp
 
 src/maths_lexer.yy.cpp : src/maths_lexer.flex src/maths_parser.tab.hpp
-	flex -o src/maths_lexer.yy.cpp  src/maths_lexer.flex
+	$(FLEX) -o src/maths_lexer.yy.cpp  src/maths_lexer.flex
 
-bin/print_canonical : src/print_canonical.o src/maths_parser.tab.o src/maths_lexer.yy.o src/maths_parser.tab.o
+src/print_canonical.o : src/print_canonical.cpp $(HEADERS)
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+src/eval_expr.o : src/eval_expr.cpp $(HEADERS)
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+src/maths_parser.tab.o : src/maths_parser.tab.cpp $(HEADERS)
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+src/maths_lexer.yy.o : src/maths_lexer.yy.cpp $(HEADERS)
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+bin/print_canonical : src/print_canonical.o src/maths_parser.tab.o src/maths_lexer.yy.o
 	mkdir -p bin
 	g++ $(CPPFLAGS) -o bin/print_canonical $^
 
-bin/eval_expr : src/eval_expr.o src/maths_parser.tab.o src/maths_lexer.yy.o src/maths_parser.tab.o
+bin/eval_expr : src/eval_expr.o src/maths_parser.tab.o src/maths_lexer.yy.o
 	mkdir -p bin
 	g++ $(CPPFLAGS) -o bin/eval_expr $^
 
 
 clean :
-	rm src/*.o
-	rm bin/*
-	rm src/*.tab.cpp
-	rm src/*.yy.cpp
-	rm src/maths_parser.output
-	rm src/maths_parser.tab.hpp
+	rm -f src/*.o
+	rm -f bin/*
+	rm -f src/*.tab.cpp
+	rm -f src/*.yy.cpp
+	rm -f src/maths_parser.output
+	rm -f src/maths_parser.tab.hpp
