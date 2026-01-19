@@ -72,6 +72,14 @@ public:
 
     virtual const char *getFunction() const
     { return "exp"; }
+
+    virtual double evaluate(
+        const std::map<std::string, double> &bindings
+        ) const override {
+      double va = getArg()->evaluate(bindings); 
+      return std::exp(va);
+    }
+
 };
 
 class SqrtFunction
@@ -84,6 +92,14 @@ public:
 
     virtual const char *getFunction() const
     { return "sqrt"; }
+
+    virtual double evaluate(
+        const std::map<std::string, double> &bindings
+        ) const override {
+      double va = getArg()->evaluate(bindings); 
+      return std::sqrt(va);
+    }
+
 };
 
 
