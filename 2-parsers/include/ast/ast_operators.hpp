@@ -57,7 +57,7 @@ public:
         const std::map<std::string,double> &bindings
     ) const override 
     {
-        // TODO-C : Run bin/eval_expr with something like 5+a, where a=10, to make sure you understand how this works
+        // TODO-C : Run bin/eval_expr with something like 5+a, where a=10, to make sure you understand how this works -> Done.
         double vl=getLeft()->evaluate(bindings);
         double vr=getRight()->evaluate(bindings);
         return vl+vr;
@@ -80,7 +80,9 @@ public:
     ) const override 
     {
         // TODO-D : Implement this, based on AddOperator::evaluate
-        throw std::runtime_error("MulOperator::evaluate is not implemented.");
+        double vl=getLeft()->evaluate(bindings);
+        double vr=getRight()->evaluate(bindings);
+        return vl-vr;
     }
 };
 
@@ -100,7 +102,9 @@ public:
         const std::map<std::string,double> &bindings
     ) const override
     {
-        throw std::runtime_error("MulOperator::evaluate is not implemented.");
+        double vl=getLeft()->evaluate(bindings);
+        double vr=getRight()->evaluate(bindings);
+        return vl*vr;
     }
 };
 
@@ -119,7 +123,9 @@ public:
         const std::map<std::string,double> &bindings
     ) const override
     {
-        throw std::runtime_error("DivOperator::evaluate is not implemented.");
+        double vl=getLeft()->evaluate(bindings);
+        double vr=getRight()->evaluate(bindings);
+        return vl/vr;
     }
 };
 
