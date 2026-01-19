@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <cmath>
 
 class Operator
     : public Expression
@@ -129,6 +130,7 @@ public:
     }
 };
 
+//what is this for? -> needs cmath std::pow()
 class ExpOperator
     : public Operator
 {
@@ -144,7 +146,9 @@ public:
         const std::map<std::string,double> &bindings
     ) const override
     {
-        throw std::runtime_error("ExpOperator::evaluate is not implemented.");
+        double vl=getLeft()->evaluate(bindings);
+        double vr=getRight()->evaluate(bindings);
+        return std::pow(vl,vr);
     }
 };
 
