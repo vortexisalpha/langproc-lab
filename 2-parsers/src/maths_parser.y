@@ -24,7 +24,7 @@
 %token T_LOG T_EXP T_SQRT
 %token T_NUMBER T_VARIABLE
 
-%type <expr> EXPR TERM UNARY FACTOR
+%type <expr> POWER EXPR TERM UNARY FACTOR
 %type <number> T_NUMBER
 %type <string> T_VARIABLE T_LOG T_EXP T_SQRT FUNCTION_NAME
 
@@ -44,13 +44,16 @@ ROOT : EXPR { g_root = $1; }
 /* TODO-3 : Add support for (x + 6) and (10 - y). You'll need to add production rules, and create an AddOperator or
             SubOperator. -> Done */
 EXPR : TERM               { $$ = $1; }
-     | TERM T_PLUS TERM   { $$ = new AddOperator($1, $3); }
-     | TERM T_MINUS TERM  { $$ = new SubOperator($1, $3); }
+     | EXPR T_PLUS TERM   { $$ = new AddOperator($1, $3); }
+     | EXPR T_MINUS TERM  { $$ = new SubOperator($1, $3); }
 
 /* TODO-4 : Add support (x * 6) and (z / 11). -> Done */
-TERM : UNARY                { $$ = $1; }
-     | UNARY T_TIMES UNARY  { $$ = new MulOperator($1, $3); }
-     | UNARY T_DIVIDE UNARY { $$ = new SubOperator($1, $3); } 
+TERM : POWER                { $$ = $1; }
+     | TERM T_TIMES POWER  { $$ = new MulOperator($1, $3); }
+     | TERM T_DIVIDE POWER { $$ = new DivOperator($1, $3); } 
+
+POWER : UNARY                   { $$ = $1; }
+      | UNARY T_EXPONENT POWER  { $$ = new ExpOperator($1, $3); }
 
 
 /*  TODO-5 : Add support for (- 5) and (- x). You'll need to add production rules for the unary minus operator and create a NegOperator. -> Done */
