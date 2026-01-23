@@ -8,6 +8,9 @@
 // See: https://stackoverflow.com/questions/46213840/
 extern "C" int fileno(FILE *stream);
 
+// Track // comments inside unclosed attributes
+int pending_attr_comments = 0;
+
 %}
 
 %x ESCID
@@ -40,25 +43,32 @@ extern "C" int fileno(FILE *stream);
 }
 
 <ATTR>"\\" {
-  yylval.attr_sequence += yytext[0];
+  yylval.escid_sequence = yytext[0];
   BEGIN(ESCID_IN_ATTR);
 }
 
 <ATTR>"//" {
+  pending_attr_comments++;
   BEGIN(COMMENT_IN_ATTR);
 }
 
 <ATTR>"*)" {
+  pending_attr_comments = 0;
   BEGIN(INITIAL);
   return AddCommentCount;
 }
 
-<ATTR>(.|\n) {
+<ATTR>. {
   yylval.attr_sequence += yytext[0];
 }
 
-<ATTR>EOF {
-  return EofAttr; //dump sequence and reg eof
+
+<ATTR>\n {
+  yylval.attr_sequence += '\n';
+}
+
+<ATTR><<EOF>> {
+  return EofAttr;
 }
 
 <COMMENT>. {}
@@ -67,7 +77,7 @@ extern "C" int fileno(FILE *stream);
   BEGIN(INITIAL);
 }
 
-<COMMENT>EOF {
+<COMMENT><<EOF>> {
     return Eof;
 }
 
@@ -78,24 +88,25 @@ extern "C" int fileno(FILE *stream);
 <ESCID>[ \n] {
   yylval.escid_sequence += yytext[0];
   BEGIN(INITIAL);
-  return DumpEscId; //dump sequence
+  return DumpEscId;
 }
 
-<ESCID>EOF {
-  return EofEscId; //dump esc sequence and reg eof
+<ESCID><<EOF>> {
+  return EofEscId;
 }
 
 <ESCID_IN_ATTR>[^ \n] {
-  yylval.attr_sequence += yytext[0];
+  yylval.escid_sequence += yytext[0];
 }
 
 <ESCID_IN_ATTR>[ \n] {
-  yylval.attr_sequence += yytext[0];
+  yylval.escid_sequence += yytext[0];
+  yylval.attr_sequence += yylval.escid_sequence;
   BEGIN(ATTR);
 }
 
-<ESCID_IN_ATTR>EOF {
-  return EofAttr; //dump sequence reg off
+<ESCID_IN_ATTR><<EOF>> {
+  return EofAttr;
 }
 
 <COMMENT_IN_ATTR>. {}
@@ -104,8 +115,12 @@ extern "C" int fileno(FILE *stream);
   BEGIN(ATTR);
 }
 
-<COMMENT_IN_ATTR>EOF {
-    return EofAttr; //dump seq reg off
+<COMMENT_IN_ATTR><<EOF>> {
+    return EofAttr;
+}
+
+<INITIAL><<EOF>> {
+    return Eof;
 }
 
 %%
