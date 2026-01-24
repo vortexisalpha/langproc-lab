@@ -2,6 +2,7 @@
 
 static std::vector<std::string> Tokenise(std::istream &src)
 {
+  //put whitespace separated elements into vector res from input stream src
     std::vector<std::string> res;
     std::string tmp;
     while(src >> tmp){
@@ -29,7 +30,7 @@ static std::pair<TreePtr,int> ParseImpl(const std::vector<std::string> &tokens, 
     if(pos < tokens.size()){
         if(tokens.at(pos)=="["){
             pos++;
-            
+            // reach inside a '[' and do a recursive call to add that to the tree and reset pos to past that position
             while(tokens.at(pos)!="]"){
                 auto sub=ParseImpl(tokens, pos);
                 branches.push_back( sub.first );
