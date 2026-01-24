@@ -64,11 +64,6 @@ int32_t Interpret(
 
     } else if (program->type == "Sub") {
 
-        int32_t l_val = Interpret(context, program->branches.at(0));
-        int32_t r_val = Interpret(context, program->branches.at(1));
-        
-        return l_val - r_val;
-
     } else if (program->type == "If") {
 
     } else if (program->type == "While") {
