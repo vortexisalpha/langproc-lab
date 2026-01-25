@@ -56,7 +56,7 @@ void CompileRec(
         std::string left = makeName("left");
         std::string right = makeName("right");
         
-        CompileRec(left, program->branges.at(0));
+        CompileRec(left, program->branches.at(0));
         CompileRec(right, program->branches.at(1));
 
         std::cout << "add " << destReg << " "  << left << " " << right << std::endl;
@@ -66,7 +66,7 @@ void CompileRec(
         std::string left = makeName("left");
         std::string right = makeName("right");
         
-        CompileRec(left, program->branges.at(0));
+        CompileRec(left, program->branches.at(0));
         CompileRec(right, program->branches.at(1));
 
         std::cout << "sub " << destReg << " "  << left << " " << right << std::endl;
