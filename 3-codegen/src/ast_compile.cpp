@@ -85,6 +85,15 @@ void CompileRec(
 
     } else if (program->type == "LessThan"){
 
+        std::string left = makeName("left");
+        std::string right = makeName("right");
+        std::string res = makeName("res");
+        
+        CompileRec(left, program->branches.at(0));
+        CompileRec(right, program->branches.at(1));
+
+        std::cout << "lt " << destReg << " "  << left << " " << right << std::endl;
+
     } else if (program->type == "If"){
 
     } else if (program->type == "While"){
