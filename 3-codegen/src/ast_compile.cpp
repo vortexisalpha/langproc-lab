@@ -45,15 +45,21 @@ void CompileRec(
         std::cout<< destReg <<std::endl; // value
                                          //
     } else if (program->type == "Assign"){
-
         
         std::string var = makeName(program->value);
         CompileRec(var, program->branches.at(0));
 
-
     } else if (program->type == "Input"){
 
     } else if (program->type == "Add"){
+
+        std::string left = makeName("left");
+        std::string right = makeName("right");
+        
+        CompileRec(left, program->branges.at(0));
+        CompileRec(right, program->branches.at(1));
+
+        std::cout << "add " << destReg << " "  << left << " " << right << std::endl;
 
     } else if (program->type == "Sub"){
 
