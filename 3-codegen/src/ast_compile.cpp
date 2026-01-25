@@ -40,7 +40,12 @@ void CompileRec(
     // TODO : handle the others
     else if (program->type == "Output"){
 
+//is this needed?
+        CompileRec(destReg, program->branches.at(0));
+        std::cout<< destReg <<std::endl; // value
+                                         //
     } else if (program->type == "Assign"){
+
 
     } else if (program->type == "Input"){
 
