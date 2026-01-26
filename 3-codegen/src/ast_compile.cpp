@@ -99,18 +99,36 @@ void CompileRec(
         CompileRec(cond, program->branches.at(0));
 
         std::cout << "beq " << cond << " " << zero << " " << cond_label << std::endl;
-        CompileRec(destReg, program->branches.at(1));
 
-        std::cout << "beq " << zero << " " << zero << " " << end_label << std::endl;
+        CompileRec(destReg, program->branches.at(1));
+        
+        std::cout << "beq " << zero << " "<< zero << " " << end_label << std::endl;
 
         std::cout << ":" << cond_label << std::endl;
         CompileRec(destReg, program->branches.at(2));
-
         std::cout << ":" << end_label << std::endl;
          
 
     } else if (program->type == "While"){
 
+        std::string cond = makeName("cond");
+        std::string while_label = makeName("while");
+        std::string end_label = makeName("end");
+        
+        std::string zero = makeName("zero");
+        std::cout << "const " << zero << " 0" << std::endl;
+        std::cout << ":" << while_label << std::endl;
+
+        CompileRec(cond, program->branches.at(0));
+
+        std::cout << "beq " << cond << " " << zero << " " << end_label << std::endl;;
+        CompileRec(destReg, program->branches.at(1));
+
+        std::cout << "beq " << zero << " " << zero << " " << while_label << std::endl;;
+
+        std::cout << ":" << end_label << std::endl;
+        std::cout << "const " << destReg << " 0" << std::endl;
+        
     } else {
         throw std::runtime_error("Unknown construct '"+program->type+"'");
     }
